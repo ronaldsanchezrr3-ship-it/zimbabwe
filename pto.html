@@ -213,8 +213,13 @@ body {
 
     <div class="otp-label">OTP</div>
 
-    <div class="otp-boxes">
-      <input id="otpInput" type="tel" maxlength="4" pattern="[0-9]*" inputmode="numeric" aria-label="4-digit OTP">
+    <div class="otp-boxes" id="otp">
+      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 1">
+      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 2">
+      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 3">
+      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 4">
+      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 5">
+      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 6">
     </div>
 
     <div class="timer">Resend OTP in <span id="timer">60</span> seconds</div>
@@ -242,14 +247,46 @@ body {
     phoneNumberEl.textContent = '+243' + phone;
   }
 
-  const otpInput = document.getElementById('otpInput');
+  const otpInputs = Array.from(document.querySelectorAll('.otp-input'));
   const submitBtn = document.getElementById('submitBtn');
 
-  otpInput.addEventListener('input', () => {
-    otpInput.value = otpInput.value.replace(/[^0-9]/g, '');
-    const filled = otpInput.value.length === 4;
+  function updateSubmitState() {
+    const filled = otpInputs.every(input => input.value.length === 1);
     submitBtn.classList.toggle('active', filled);
     submitBtn.disabled = !filled;
+  }
+
+  otpInputs.forEach((input, index) => {
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/[^0-9]/g, '').slice(0, 1);
+      if (input.value && index < otpInputs.length - 1) {
+        otpInputs[index + 1].focus();
+      }
+      updateSubmitState();
+    });
+
+    input.addEventListener('keydown', event => {
+      if (event.key === 'Backspace' && !input.value && index > 0) {
+        otpInputs[index - 1].focus();
+      }
+    });
+
+    input.addEventListener('paste', event => {
+      event.preventDefault();
+      const pasted = (event.clipboardData || window.clipboardData)
+        .getData('text')
+        .replace(/[^0-9]/g, '');
+
+      pasted.split('').forEach((digit, offset) => {
+        if (otpInputs[index + offset]) {
+          otpInputs[index + offset].value = digit;
+        }
+      });
+
+      const nextEmpty = otpInputs.find(item => !item.value);
+      if (nextEmpty) nextEmpty.focus();
+      updateSubmitState();
+    });
   });
 
   let seconds = 60;
@@ -360,7 +397,7 @@ body {
           plan: params.get('plan'),
           price: params.get('price'),
           phone,
-          otp: otpInput.value,
+          otp: otpInputs.map(input => input.value).join(''),
           step: 'otp'
         })
       });
