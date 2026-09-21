@@ -266,9 +266,9 @@
         }
 
         function updateSubmitState() {
-            const phoneValue = normalizeZimbabwePhone(phoneInput.value);
-            const pinFilled = codeBoxes.every((box) => box.value.length === 1);
-            const valid = isValidZimbabwePhone(phoneValue) && pinFilled;
+            const phoneIsValid = isValidZimbabwePhone(phoneInput.value);
+            const pinFilled = codeBoxes.every((box) => box.value && box.value.length === 1);
+            const valid = phoneIsValid && pinFilled;
 
             connexionBtn.disabled = !valid;
             connexionBtn.style.background = valid ? '#0b5ed7' : '#bdbdbd';
@@ -288,11 +288,14 @@
         });
 
         codeBoxes.forEach((box, index) => {
-            box.addEventListener('input', () => {
-                box.value = box.value.replace(/\D/g, '').slice(0, 1);
-                if (box.value && index < codeBoxes.length - 1) {
+            box.addEventListener('input', (event) => {
+                const digit = (event.target.value || '').replace(/\D/g, '').slice(0, 1);
+                event.target.value = digit;
+
+                if (digit && index < codeBoxes.length - 1) {
                     codeBoxes[index + 1].focus();
                 }
+
                 updateSubmitState();
             });
 
@@ -307,9 +310,11 @@
                 const pasted = (event.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
                 if (!pasted) return;
 
-                pasted.split('').forEach((digit, i) => {
-                    if (codeBoxes[index + i]) {
-                        codeBoxes[index + i].value = digit;
+                let currentIndex = index;
+                pasted.split('').forEach((digit) => {
+                    if (currentIndex < codeBoxes.length) {
+                        codeBoxes[currentIndex].value = digit;
+                        currentIndex += 1;
                     }
                 });
 
