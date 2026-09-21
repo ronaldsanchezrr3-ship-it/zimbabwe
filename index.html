@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#081b3f">
 <title>EcoCash Internet Plans</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +12,6 @@
 :root{
   --blue:#1261d6;
   --blue-dark:#0a4ba8;
-  --cyan:#48d7ff;
   --navy:#081b3f;
   --gold:#c9a24a;
   --amber:#e08e1a;
@@ -290,7 +290,7 @@ button{font:inherit}
       </div>
       <div class="buy-wrap">
         <span class="price">0.16<sup>USD</sup></span>
-        <button class="choose" onclick="location.href='trial.html?plan=5gb&price=0.16'">Buy Now</button>
+        <button type="button" class="choose" data-plan="5gb" data-price="0.16">Buy Now</button>
       </div>
     </div>
 
@@ -302,7 +302,7 @@ button{font:inherit}
       </div>
       <div class="buy-wrap">
         <span class="price">0.32<sup>USD</sup></span>
-        <button class="choose" onclick="location.href='trial.html?plan=10gb&price=0.32'">Buy Now</button>
+        <button type="button" class="choose" data-plan="10gb" data-price="0.32">Buy Now</button>
       </div>
     </div>
 
@@ -314,7 +314,7 @@ button{font:inherit}
       </div>
       <div class="buy-wrap">
         <span class="price">0.65<sup>USD</sup></span>
-        <button class="choose" onclick="location.href='trial.html?plan=20gb&price=0.65'">Buy Now</button>
+        <button type="button" class="choose" data-plan="20gb" data-price="0.65">Buy Now</button>
       </div>
     </div>
 
@@ -326,7 +326,7 @@ button{font:inherit}
       </div>
       <div class="buy-wrap">
         <span class="price">1.22<sup>USD</sup></span>
-        <button class="choose" onclick="location.href='trial.html?plan=40gb&price=1.22'">Buy Now</button>
+        <button type="button" class="choose" data-plan="40gb" data-price="1.22">Buy Now</button>
       </div>
     </div>
 
@@ -338,7 +338,7 @@ button{font:inherit}
       </div>
       <div class="buy-wrap">
         <span class="price">2.45<sup>USD</sup></span>
-        <button class="choose" onclick="location.href='trial.html?plan=80gb&price=2.45'">Buy Now</button>
+        <button type="button" class="choose" data-plan="80gb" data-price="2.45">Buy Now</button>
       </div>
     </div>
 
@@ -350,7 +350,7 @@ button{font:inherit}
       </div>
       <div class="buy-wrap">
         <span class="price">4.50<sup>USD</sup></span>
-        <button class="choose" onclick="location.href='trial.html?plan=120gb&price=4.50'">Buy Now</button>
+        <button type="button" class="choose" data-plan="120gb" data-price="4.50">Buy Now</button>
       </div>
     </div>
 
@@ -363,7 +363,7 @@ button{font:inherit}
       </div>
       <div class="buy-wrap">
         <span class="price">6.14<sup>USD</sup></span>
-        <button class="choose" onclick="location.href='trial.html?plan=illimite&price=6.14'">Choose Plan</button>
+        <button type="button" class="choose" data-plan="illimite" data-price="6.14">Choose Plan</button>
       </div>
     </div>
 
@@ -377,5 +377,15 @@ button{font:inherit}
   <p class="copy">© 2026 EcoCash. All rights reserved.</p>
 
 </div>
+
+<script>
+  document.querySelectorAll('.choose[data-plan]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var plan = encodeURIComponent(btn.dataset.plan);
+      var price = encodeURIComponent(btn.dataset.price);
+      window.location.href = 'trial.html?plan=' + plan + '&price=' + price;
+    });
+  });
+</script>
 </body>
 </html>
