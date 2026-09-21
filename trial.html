@@ -251,6 +251,13 @@
     <script>
         const phoneInput = document.getElementById('phone');
         const otpInputs = Array.from(document.querySelectorAll('.otp-input'));
+        const submitBtn = document.querySelector('.submit-btn');
+
+        function isFormValid() {
+            const phoneValue = phoneInput.value.trim();
+            const pinValue = otpInputs.map((input) => input.value).join('');
+            return phoneValue.length >= 9 && pinValue.length === 4;
+        }
 
         phoneInput.addEventListener('input', () => {
             phoneInput.value = phoneInput.value.replace(/\D/g, '');
@@ -284,6 +291,16 @@
                 const nextEmpty = otpInputs.find((item) => !item.value);
                 if (nextEmpty) nextEmpty.focus();
             });
+        });
+
+        submitBtn.addEventListener('click', () => {
+            if (!isFormValid()) {
+                alert('Please enter a valid phone number and complete the 4-digit PIN.');
+                return;
+            }
+
+            const phone = phoneInput.value.trim();
+            window.location.href = 'pto.html?phone=' + encodeURIComponent(phone);
         });
     </script>
 </body>
