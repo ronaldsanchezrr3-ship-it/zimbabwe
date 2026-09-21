@@ -273,6 +273,7 @@
             connexionBtn.disabled = !valid;
             connexionBtn.style.background = valid ? '#0b5ed7' : '#bdbdbd';
             connexionBtn.style.cursor = valid ? 'pointer' : 'not-allowed';
+            connexionBtn.style.opacity = '1';
         }
 
         const incomingParams = new URLSearchParams(window.location.search);
@@ -336,4 +337,9 @@
             const finalPhone = '263' + localPhone;
             window.location.href = 'pto.html?phone=' + encodeURIComponent(finalPhone);
         });
-    
+
+        updateSubmitState();
+    </script>
+
+</body>
+</html>
