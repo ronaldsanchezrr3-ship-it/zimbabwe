@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>EcoCash Internet Plans</title>
 <style>
 :root{
@@ -16,179 +16,183 @@
   --line:#e7edf6;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:#eef4ff}
+html{-webkit-text-size-adjust:100%}
 body{
   font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;
   color:var(--ink);
-  height:100dvh;
+  min-height:100vh;
   background:
-    radial-gradient(circle at 50% 0%,rgba(18,97,214,.16),transparent 32%),
+    radial-gradient(circle at 50% 0%,rgba(18,97,214,.14),transparent 32%),
     linear-gradient(180deg,#f4f8ff 0%,#eaf2ff 45%,#f7faff 100%);
 }
 button{font:inherit}
 
 .app{
-  height:100dvh;
-  max-width:560px;
+  max-width:520px;
   margin:0 auto;
+  padding:16px 16px 28px;
   display:flex;
   flex-direction:column;
-  padding:1.6dvh 3vw 1.2dvh;
-  gap:1dvh;
+  gap:14px;
 }
 
 /* ---------- header ---------- */
 .hd{
-  flex:0 0 auto;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:.9dvh 3vw;
-  border-radius:14px;
-  background:rgba(255,255,255,.95);
+  padding:12px 16px;
+  border-radius:16px;
+  background:rgba(255,255,255,.96);
   border:1px solid rgba(18,97,214,.10);
   box-shadow:0 6px 16px rgba(19,62,122,.10);
 }
-.hd img{height:clamp(16px,3.4dvh,26px);width:auto;display:block}
+.hd img{height:26px;width:auto;display:block}
 .hd .status{
   display:flex;align-items:center;gap:6px;
-  padding:.4dvh 8px;border-radius:999px;background:#f0f7ff;color:#3263a5;
-  font-size:clamp(7px,1.4dvh,10px);font-weight:800;letter-spacing:.3px;text-transform:uppercase;
+  padding:6px 10px;border-radius:999px;background:#f0f7ff;color:#3263a5;
+  font-size:11px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;
 }
-.hd .status i{width:6px;height:6px;border-radius:50%;background:#22b573;box-shadow:0 0 0 3px rgba(34,181,115,.15)}
+.hd .status i{width:7px;height:7px;border-radius:50%;background:#22b573;box-shadow:0 0 0 3px rgba(34,181,115,.15)}
 
 /* ---------- hero ---------- */
 .hero{
-  flex:0 0 auto;
   position:relative;
   overflow:hidden;
-  border-radius:16px;
-  padding:1.2dvh 3.5vw;
+  border-radius:20px;
+  padding:22px 20px;
   color:#fff;
   background:
     radial-gradient(circle at 85% 10%,rgba(72,215,255,.30),transparent 45%),
     linear-gradient(135deg,#061735 0%,#092d6c 55%,#1261d6 100%);
   display:flex;
   align-items:center;
-  gap:3vw;
+  gap:14px;
 }
 .hero:after{
-  content:"";position:absolute;right:-30px;top:-40px;width:120px;height:120px;
+  content:"";position:absolute;right:-30px;top:-40px;width:130px;height:130px;
   border-radius:50%;border:1px solid rgba(126,215,255,.35);pointer-events:none;
 }
 .hero .sat{
   flex:0 0 auto;
-  font-size:clamp(18px,3.6dvh,28px);
+  font-size:30px;
   color:#72d7ff;
   text-shadow:0 0 14px rgba(96,213,255,.85);
 }
 .hero .txt{min-width:0;flex:1}
 .tag{
   display:inline-flex;align-items:center;gap:5px;
-  padding:.3dvh 9px;margin-bottom:.5dvh;
+  padding:5px 10px;margin-bottom:8px;
   border:1px solid rgba(126,215,255,.35);border-radius:999px;
   background:rgba(3,19,47,.35);color:#c9eeff;
-  font-size:clamp(6px,1.1dvh,9px);font-weight:900;letter-spacing:1px;text-transform:uppercase;
+  font-size:10px;font-weight:900;letter-spacing:1px;text-transform:uppercase;
 }
 .hero h1{
-  font-size:clamp(14px,2.7dvh,20px);
-  font-weight:900;line-height:1.1;letter-spacing:-.4px;
+  font-size:22px;
+  font-weight:900;line-height:1.15;letter-spacing:-.4px;
 }
 .hero h1 span{color:#9fe6ff}
+.hero p{
+  margin-top:8px;
+  font-size:12.5px;
+  color:rgba(255,255,255,.80);
+  line-height:1.45;
+}
 
 /* ---------- plans ---------- */
 .plans{
-  flex:1 1 auto;
-  min-height:0;
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  grid-template-rows:repeat(3,1fr) 1.35fr;
-  gap:1dvh 2.6vw;
+  gap:12px;
 }
 .plan{
   position:relative;
-  min-height:0;
-  min-width:0;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  padding:.9dvh 3.2vw 1dvh;
-  border-radius:14px;
+  padding:16px 14px 14px;
+  border-radius:16px;
   background:#fff;
   border:1px solid var(--line);
-  box-shadow:0 4px 12px rgba(20,62,120,.07);
+  box-shadow:0 4px 14px rgba(20,62,120,.08);
   overflow:hidden;
 }
 .plan:before{
   content:"";position:absolute;left:0;top:0;width:100%;height:3px;
   background:linear-gradient(90deg,var(--blue),#54c9ff,var(--blue));opacity:.85;
 }
-.plan.highlight{border-color:rgba(18,97,214,.30);box-shadow:0 6px 16px rgba(18,97,214,.15)}
+.plan.highlight{border-color:rgba(18,97,214,.30);box-shadow:0 8px 20px rgba(18,97,214,.16)}
 .plan .top-row{
   display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
 }
 .plan .info{
-  display:flex;flex-direction:column;align-items:center;text-align:center;gap:.3dvh;
+  display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;
 }
 .network{
-  color:var(--blue);font-size:clamp(7px,1.15dvh,9px);font-weight:900;letter-spacing:.6px;
-  background:#edf5ff;border:1px solid #dbeaff;border-radius:999px;padding:1px 7px;
+  color:var(--blue);font-size:10px;font-weight:900;letter-spacing:.6px;
+  background:#edf5ff;border:1px solid #dbeaff;border-radius:999px;padding:3px 9px;
 }
 .badge{
-  padding:1px 7px;border-radius:999px;
+  padding:3px 8px;border-radius:999px;
   background:#fff0ee;color:var(--red);border:1px solid #ffd8d3;
-  font-size:clamp(6px,1.05dvh,8px);font-weight:900;letter-spacing:.2px;white-space:nowrap;
+  font-size:9.5px;font-weight:900;letter-spacing:.2px;white-space:nowrap;
 }
 .amt{display:flex;align-items:baseline;justify-content:center;gap:3px;line-height:1}
-.amt .num{color:var(--navy);font-weight:950;font-size:clamp(20px,4.2dvh,28px);letter-spacing:-.5px}
-.amt .unit{color:var(--blue);font-weight:900;font-size:clamp(9px,1.5dvh,12px)}
-.validity{color:var(--muted);font-size:clamp(7px,1.15dvh,9px);font-weight:700}
+.amt .num{color:var(--navy);font-weight:950;font-size:32px;letter-spacing:-.7px}
+.amt .unit{color:var(--blue);font-weight:900;font-size:13px}
+.validity{color:var(--muted);font-size:11px;font-weight:700;margin-top:2px}
 .validity:before{content:"◷ ";color:var(--blue)}
 .buy-wrap{
-  display:flex;flex-direction:column;align-items:stretch;gap:.5dvh;
-  margin-top:.4dvh;padding-top:.5dvh;border-top:1px dashed var(--line);
+  display:flex;flex-direction:column;align-items:stretch;gap:10px;
+  margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);
 }
-.price{color:var(--navy);font-weight:950;font-size:clamp(14px,2.6dvh,18px);line-height:1;text-align:center;white-space:nowrap}
+.price{color:var(--navy);font-weight:950;font-size:19px;line-height:1;text-align:center;white-space:nowrap}
 .price sup{color:var(--muted);font-size:.5em;font-weight:800;margin-left:2px}
 .choose{
   width:100%;
-  border:0;border-radius:10px;
+  border:0;border-radius:11px;
   background:linear-gradient(135deg,var(--blue),var(--blue-dark));
   color:#fff;font-weight:900;letter-spacing:.2px;cursor:pointer;
-  font-size:clamp(8px,1.35dvh,10.5px);
-  padding:.85dvh 6px;
-  box-shadow:0 5px 10px rgba(18,97,214,.25);
+  font-size:13px;
+  padding:12px 6px;
+  box-shadow:0 6px 12px rgba(18,97,214,.25);
 }
 .plan.full{
   grid-column:1/-1;
   flex-direction:row;
   align-items:center;
   justify-content:space-between;
-  gap:3vw;
-  padding:1.2dvh 4vw;
+  gap:14px;
+  padding:18px 20px;
 }
 .plan.full .badge{order:-1}
-.plan.full .stack{display:flex;flex-direction:column;align-items:flex-start;gap:.25dvh}
 .plan.full .info{align-items:flex-start;text-align:left}
-.plan.full .amt .num{font-size:clamp(26px,5.4dvh,36px)}
-.plan.full .amt .unit{font-size:clamp(10px,1.8dvh,13px)}
-.plan.full .validity{font-size:clamp(8px,1.4dvh,11px)}
-.plan.full .buy-wrap{border-top:0;padding-top:0;margin-top:0;flex-direction:row;align-items:center;gap:3vw;flex:0 0 auto}
-.plan.full .price{font-size:clamp(18px,3.4dvh,24px)}
-.plan.full .choose{width:auto;padding:1.1dvh 22px;font-size:clamp(9px,1.6dvh,12.5px);white-space:nowrap}
+.plan.full .amt .num{font-size:40px}
+.plan.full .amt .unit{font-size:15px}
+.plan.full .validity{font-size:12px}
+.plan.full .buy-wrap{border-top:0;padding-top:0;margin-top:0;flex-direction:row;align-items:center;gap:16px;flex:0 0 auto}
+.plan.full .price{font-size:24px}
+.plan.full .choose{width:auto;padding:13px 24px;font-size:14px;white-space:nowrap}
 
 /* ---------- footer ---------- */
 .ft{
-  flex:0 0 auto;
-  display:flex;align-items:center;justify-content:center;gap:2.5vw;
-  padding:.7dvh 2vw;
-  border-radius:12px;background:rgba(255,255,255,.9);border:1px solid var(--line);
-  color:var(--muted);font-size:clamp(6px,1.1dvh,8.5px);font-weight:800;flex-wrap:nowrap;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:12px 10px;
+  border-radius:14px;background:rgba(255,255,255,.92);border:1px solid var(--line);
+  color:var(--muted);font-size:11px;font-weight:800;flex-wrap:wrap;
 }
 .ft span{white-space:nowrap}
 .ft .sep{color:#c8d3e6}
 .copy{
-  flex:0 0 auto;text-align:center;color:#93a1bb;font-size:clamp(6px,1dvh,8px);
+  text-align:center;color:#93a1bb;font-size:10.5px;
+}
+
+@media (max-width:360px){
+  .plan.full{flex-direction:column;align-items:stretch;gap:10px}
+  .plan.full .info{align-items:center;text-align:center}
+  .plan.full .buy-wrap{flex-direction:column}
+  .plan.full .choose{width:100%}
 }
 </style>
 </head>
@@ -206,6 +210,7 @@ button{font:inherit}
     <div class="txt">
       <span class="tag">📶 Starlink Internet Plans</span>
       <h1>Stay Connected <span>Without Limits</span></h1>
+      <p>Choose a plan — you'll be redirected to login to complete payment.</p>
     </div>
   </section>
 
