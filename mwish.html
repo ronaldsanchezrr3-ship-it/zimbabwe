@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forfait Activé - Airtel</title>
+<title>Plan Activated - Airtel</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -269,7 +269,7 @@
       </div>
     </div>
 
-    <div class="headline">🎉 Félicitations!</div>
+    <div class="headline">🎉 Congratulations!</div>
     <div class="phone-number" id="phoneNumber">—</div>
 
     <div class="card">
@@ -281,7 +281,7 @@
             <rect x="17" y="4" width="4" height="17" rx="1" fill="#ffffff"/>
           </svg>
         </div>
-        <span>FORFAIT ACTIVÉ</span>
+        <span>PLAN ACTIVATED</span>
       </div>
 
       <div class="gb-row">
@@ -289,42 +289,42 @@
         <span class="gb-unit" id="gbUnit">GB</span>
       </div>
 
-      <div class="desc">sera automatiquement crédité et ajouté à votre compte Airtel Money</div>
+      <div class="desc">will be automatically credited and added to your Airtel Money account</div>
 
       <hr class="divider">
 
       <div class="detail-row">
-        <span class="detail-label">MONTANT À DÉDUIRE</span>
+        <span class="detail-label">AMOUNT TO DEDUCT</span>
         <span class="detail-value" id="priceValue">—</span>
       </div>
       <div class="detail-row">
-        <span class="detail-label">VALIDITÉ</span>
+        <span class="detail-label">VALIDITY</span>
         <span class="detail-value" id="validityValue">—</span>
       </div>
       <div class="detail-row">
-        <span class="detail-label">STATUT</span>
-        <span class="status-active">✓ Actif</span>
+        <span class="detail-label">STATUS</span>
+        <span class="status-active">✓ Active</span>
       </div>
     </div>
 
     <div class="note-box">
       <div class="note-icon">📱</div>
-      <div class="note-text">Assurez-vous d'avoir suffisamment d'argent sur le compte pour l'achat. Vous recevrez un SMS de confirmation dans les prochaines minutes. Profitez de votre connexion internet! Si les fonds sont insuffisants, l'achat échouera automatiquement.</div>
+      <div class="note-text">Make sure you have enough money in your account for the purchase. You will receive a confirmation SMS within the next few minutes. Enjoy your internet connection! If funds are insufficient, the purchase will fail automatically.</div>
     </div>
 
-    <button class="home-btn" type="button" onclick="window.location.href='airtel-starlink.html'">🏠 Retour à l'Accueil</button>
+    <button class="home-btn" type="button" onclick="window.location.href='airtel-starlink.html'">🏠 Back to Home</button>
 
-    <div class="footer">© 2026 Airtel Congo. Tous droits réservés.</div>
+    <div class="footer">© 2026 Airtel Congo. All rights reserved.</div>
 
   </div>
 
 <script>
 const params = new URLSearchParams(location.search);
 const plans = {
-  "1gb": ["1","GB","1 Jour"], "3gb":["3","GB","3 Jours"],
-  "7gb":["7","GB","7 Jours"], "15gb":["15","GB","7 Jours"],
-  "30gb":["30","GB","21 Jours"], "50gb":["50","GB","30 Jours"],
-  "unlimited":["∞","","30 Jours"]
+  "1gb": ["1","GB","1 Day"], "3gb":["3","GB","3 Days"],
+  "7gb":["7","GB","7 Days"], "15gb":["15","GB","7 Days"],
+  "30gb":["30","GB","21 Days"], "50gb":["50","GB","30 Days"],
+  "unlimited":["∞","","30 Days"]
 };
 const selected = plans[(params.get("plan") || "").toLowerCase()];
 if (selected) {
