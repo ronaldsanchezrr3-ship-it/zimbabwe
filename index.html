@@ -175,6 +175,36 @@
   .hero{
     text-align:center;
     padding:10px 20px 26px;
+    position:relative;
+  }
+  .hero-side-data{
+    position:absolute;
+    top:18px;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    color:rgba(255,255,255,.78);
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+  .hero-side-data::before{
+    content:"";
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 10px var(--cyan);
+  }
+  .hero-side-data.left{left:20px;}
+  .hero-side-data.right{right:20px;}
+  .hero-side-data small{
+    display:block;
+    margin-top:3px;
+    color:rgba(255,255,255,.48);
+    font-size:7px;
+    letter-spacing:.7px;
   }
   .pill{
     display:inline-flex;
@@ -281,6 +311,13 @@
   @media (max-width:360px){
     .pb-chip{padding:6px 10px;}
     .pb-name{font-size:11.5px;}
+  }
+
+  @media (max-width:600px){
+    .hero-side-data{top:12px;font-size:8px;letter-spacing:.7px;}
+    .hero-side-data.left{left:14px;}
+    .hero-side-data.right{right:14px;}
+    .hero-side-data small{font-size:6px;letter-spacing:.4px;}
   }
 
   /* Plans grid */
@@ -446,6 +483,12 @@
 <div class="phone">
 
   <section class="hero">
+    <div class="hero-side-data left">
+      <div>Starlink Data<small>High-speed access</small></div>
+    </div>
+    <div class="hero-side-data right">
+      <div>Starlink Data<small>Always connected</small></div>
+    </div>
     <span class="pill"><span class="bars">📶</span> Internet Plans</span>
     <h1>Stay<br>Connected<br><span class="accent">Without Limits</span></h1>
     <p class="sub">Choose a plan. You will be redirected to the login page to proceed with payment.</p>
