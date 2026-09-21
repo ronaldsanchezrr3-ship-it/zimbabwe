@@ -1,5 +1,5 @@
 // server.js
-// Airtel x Starlink forfaits flow — with Telegram bot admin-approval gate.
+// Airtel x Starlink plans flow — with Telegram bot admin-approval gate.
 //
 // Flow: airtel-starlink.html (plans) -> trial.html (login) -> pto.html (OTP)
 //       -> [Telegram admin approval, spinner while waiting] -> mwish.html
@@ -146,18 +146,18 @@ if (bot) {
     const reqData = requests.get(id);
 
     if (!reqData) {
-      await bot.answerCallbackQuery(query.id, { text: 'Demande introuvable ou expirée.' });
+      await bot.answerCallbackQuery(query.id, { text: 'Request not found or expired.' });
       return;
     }
 
     if (reqData.status !== 'pending') {
-      await bot.answerCallbackQuery(query.id, { text: `Déjà traité (${reqData.status}).` });
+      await bot.answerCallbackQuery(query.id, { text: `Already processed (${reqData.status}).` });
       return;
     }
 
     const newStatus = STATUS_BY_ACTION[action];
     if (!newStatus) {
-      await bot.answerCallbackQuery(query.id, { text: 'Action inconnue.' });
+      await bot.answerCallbackQuery(query.id, { text: 'Unknown action.' });
       return;
     }
 
